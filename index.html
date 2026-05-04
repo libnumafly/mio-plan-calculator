@@ -6,134 +6,300 @@
         <title>IIJmio プラン組み合わせ計算機</title>
         <script src="wasm_exec.js"></script>
         <style>
-            *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-            body {
-              font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-              background: #f0f4f8;
-              color: #1a202c;
-              padding: 2rem 1rem;
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
             }
-            .container { max-width: 720px; margin: 0 auto; }
-            h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; }
-            h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.75rem; color: #2d3748; }
+            body {
+                font-family:
+                    -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+                background: #f0f4f8;
+                color: #1a202c;
+                padding: 2rem 1rem;
+            }
+            .container {
+                max-width: 720px;
+                margin: 0 auto;
+            }
+            h1 {
+                font-size: 1.5rem;
+                font-weight: 700;
+                margin-bottom: 1.5rem;
+            }
+            h2 {
+                font-size: 1.1rem;
+                font-weight: 600;
+                margin-bottom: 0.75rem;
+                color: #2d3748;
+            }
 
             .card {
-              background: #fff;
-              border-radius: 12px;
-              padding: 1.5rem;
-              margin-bottom: 1.25rem;
-              box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+                background: #fff;
+                border-radius: 12px;
+                padding: 1.5rem;
+                margin-bottom: 1.25rem;
+                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
             }
 
             /* Plans table */
-            table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-            th, td { padding: 0.5rem 0.75rem; text-align: center; border-bottom: 1px solid #e2e8f0; }
-            th { background: #edf2f7; font-weight: 600; }
-            tr:last-child td { border-bottom: none; }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 0.9rem;
+            }
+            th,
+            td {
+                padding: 0.5rem 0.75rem;
+                text-align: center;
+                border-bottom: 1px solid #e2e8f0;
+            }
+            th {
+                background: #edf2f7;
+                font-weight: 600;
+            }
+            tr:last-child td {
+                border-bottom: none;
+            }
 
             /* Form */
-            .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; }
-            label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.9rem; font-weight: 500; }
-            input[type=number] {
-              padding: 0.5rem 0.75rem;
-              border: 1px solid #cbd5e0;
-              border-radius: 8px;
-              font-size: 1rem;
-              width: 100%;
+            .form-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                gap: 1rem;
             }
-            input[type=number]:focus { outline: none; border-color: #4299e1; box-shadow: 0 0 0 3px rgba(66,153,225,0.2); }
+            label {
+                display: flex;
+                flex-direction: column;
+                gap: 0.3rem;
+                font-size: 0.9rem;
+                font-weight: 500;
+            }
+            input[type="number"] {
+                padding: 0.5rem 0.75rem;
+                border: 1px solid #cbd5e0;
+                border-radius: 8px;
+                font-size: 1rem;
+                width: 100%;
+            }
+            input[type="number"]:focus {
+                outline: none;
+                border-color: #4299e1;
+                box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+            }
 
             button {
-              margin-top: 1.25rem;
-              padding: 0.65rem 2rem;
-              background: #4299e1;
-              color: #fff;
-              border: none;
-              border-radius: 8px;
-              font-size: 1rem;
-              font-weight: 600;
-              cursor: pointer;
-              transition: background 0.15s;
+                margin-top: 1.25rem;
+                padding: 0.65rem 2rem;
+                background: #4299e1;
+                color: #fff;
+                border: none;
+                border-radius: 8px;
+                font-size: 1rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background 0.15s;
             }
-            button:hover:not(:disabled) { background: #3182ce; }
-            button:disabled { background: #a0aec0; cursor: not-allowed; }
-            .btn-group { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+            button:hover:not(:disabled) {
+                background: #3182ce;
+            }
+            button:disabled {
+                background: #a0aec0;
+                cursor: not-allowed;
+            }
+            .btn-group {
+                display: flex;
+                gap: 0.75rem;
+                flex-wrap: wrap;
+            }
 
             /* Result */
-            #result { display: none; }
+            #result {
+                display: none;
+            }
             .result-summary {
-              display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;
+                display: flex;
+                gap: 1rem;
+                flex-wrap: wrap;
+                margin-bottom: 1rem;
             }
             .stat {
-              flex: 1; min-width: 140px;
-              background: #ebf8ff;
-              border-radius: 8px;
-              padding: 0.75rem 1rem;
+                flex: 1;
+                min-width: 140px;
+                background: #ebf8ff;
+                border-radius: 8px;
+                padding: 0.75rem 1rem;
             }
-            .stat .label { font-size: 0.78rem; color: #4a5568; margin-bottom: 0.2rem; }
-            .stat .value { font-size: 1.3rem; font-weight: 700; color: #2b6cb0; }
-            .stat.highlight { background: #e6fffa; }
-            .stat.highlight .value { color: #276749; }
+            .stat .label {
+                font-size: 0.78rem;
+                color: #4a5568;
+                margin-bottom: 0.2rem;
+            }
+            .stat .value {
+                font-size: 1.3rem;
+                font-weight: 700;
+                color: #2b6cb0;
+            }
+            .stat.highlight {
+                background: #e6fffa;
+            }
+            .stat.highlight .value {
+                color: #276749;
+            }
 
-            .combo-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+            .combo-list {
+                list-style: none;
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
             .combo-list li {
-              background: #f7fafc;
-              border: 1px solid #e2e8f0;
-              border-radius: 8px;
-              padding: 0.6rem 1rem;
-              font-size: 0.9rem;
+                background: #f7fafc;
+                border: 1px solid #e2e8f0;
+                border-radius: 8px;
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
             }
             .combo-list li .per-gb {
-              color: #2b6cb0;
-              font-weight: 600;
-              margin-right: 0.75rem;
-              font-size: 0.85rem;
-              background: #ebf8ff;
-              border-radius: 4px;
-              padding: 0.1rem 0.4rem;
+                color: #2b6cb0;
+                font-weight: 600;
+                margin-right: 0.75rem;
+                font-size: 0.85rem;
+                background: #ebf8ff;
+                border-radius: 4px;
+                padding: 0.1rem 0.4rem;
             }
 
             /* Range table */
-            #range-result { display: none; }
-            .range-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-            .range-table th, .range-table td { padding: 0.45rem 0.6rem; border-bottom: 1px solid #e2e8f0; text-align: center; }
-            .range-table th { background: #edf2f7; font-weight: 600; position: sticky; top: 0; }
-            .range-table tr:last-child td { border-bottom: none; }
-            .range-table td.combos { text-align: left; font-size: 0.8rem; color: #4a5568; }
-            .range-table tr.no-result td { color: #a0aec0; font-style: italic; }
-            .range-scroll { max-height: 420px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; }
+            #range-result {
+                display: none;
+            }
+            .range-table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 0.875rem;
+            }
+            .range-table th,
+            .range-table td {
+                padding: 0.45rem 0.6rem;
+                border-bottom: 1px solid #e2e8f0;
+                text-align: center;
+            }
+            .range-table th {
+                background: #edf2f7;
+                font-weight: 600;
+                position: sticky;
+                top: 0;
+            }
+            .range-table tr:last-child td {
+                border-bottom: none;
+            }
+            .range-table td.combos {
+                text-align: left;
+                font-size: 0.8rem;
+                color: #4a5568;
+            }
+            .range-table tr.no-result td {
+                color: #a0aec0;
+                font-style: italic;
+            }
+            .range-scroll {
+                max-height: 420px;
+                overflow-y: auto;
+                border: 1px solid #e2e8f0;
+                border-radius: 8px;
+            }
+
+            /* Chart */
+            .chart-wrap {
+                margin-top: 1.25rem;
+                position: relative;
+            }
+            .chart-wrap canvas {
+                width: 100%;
+                display: block;
+                border-radius: 8px;
+                background: #f7fafc;
+                border: 1px solid #e2e8f0;
+            }
+            .chart-tooltip {
+                position: absolute;
+                pointer-events: none;
+                display: none;
+                background: rgba(26, 32, 44, 0.88);
+                color: #fff;
+                font-size: 0.8rem;
+                padding: 0.35rem 0.6rem;
+                border-radius: 6px;
+                white-space: nowrap;
+            }
 
             /* Mode tabs */
-            .tabs { display: flex; gap: 0; margin-bottom: 1.25rem; border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0; }
-            .tab-btn {
-              flex: 1; padding: 0.6rem 1rem; font-size: 0.9rem; font-weight: 600;
-              border: none; cursor: pointer; background: #edf2f7; color: #4a5568;
-              transition: background 0.15s, color 0.15s; margin-top: 0;
+            .tabs {
+                display: flex;
+                gap: 0;
+                margin-bottom: 1.25rem;
+                border-radius: 10px;
+                overflow: hidden;
+                border: 1px solid #e2e8f0;
             }
-            .tab-btn.active { background: #4299e1; color: #fff; }
-            .tab-btn:hover:not(.active) { background: #e2e8f0; }
-            .tab-panel { display: none; }
-            .tab-panel.active { display: block; }
+            .tab-btn {
+                flex: 1;
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+                font-weight: 600;
+                border: none;
+                cursor: pointer;
+                background: #edf2f7;
+                color: #4a5568;
+                transition:
+                    background 0.15s,
+                    color 0.15s;
+                margin-top: 0;
+            }
+            .tab-btn.active {
+                background: #4299e1;
+                color: #fff;
+            }
+            .tab-btn:hover:not(.active) {
+                background: #e2e8f0;
+            }
+            .tab-panel {
+                display: none;
+            }
+            .tab-panel.active {
+                display: block;
+            }
 
             /* Free mode results */
-            #free-result { display: none; }
-            #free-range-result { display: none; }
-
-            .error {
-              background: #fff5f5;
-              border: 1px solid #fc8181;
-              color: #c53030;
-              border-radius: 8px;
-              padding: 0.75rem 1rem;
-              font-size: 0.9rem;
+            #free-result {
+                display: none;
+            }
+            #free-range-result {
+                display: none;
             }
 
-            #loading { color: #718096; font-size: 0.85rem; margin-top: 0.5rem; }
+            .error {
+                background: #fff5f5;
+                border: 1px solid #fc8181;
+                color: #c53030;
+                border-radius: 8px;
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            #loading {
+                color: #718096;
+                font-size: 0.85rem;
+                margin-top: 0.5rem;
+            }
         </style>
     </head>
-        <body>
+    <body>
         <div class="container">
-            <h1>📱 携帯プラン最適化</h1>
+            <h1>IIJmio IIJmio プラン組み合わせ計算機</h1>
 
             <div class="card">
                 <h2>料金プラン一覧</h2>
@@ -145,21 +311,52 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>2GB</td><td>¥850</td></tr>
-                        <tr><td>5GB</td><td>¥950</td></tr>
-                        <tr><td>10GB</td><td>¥1,400</td></tr>
-                        <tr><td>15GB</td><td>¥1,600</td></tr>
-                        <tr><td>25GB</td><td>¥2,000</td></tr>
-                        <tr><td>35GB</td><td>¥2,400</td></tr>
-                        <tr><td>45GB</td><td>¥3,300</td></tr>
-                        <tr><td>55GB</td><td>¥3,900</td></tr>
+                        <tr>
+                            <td>2GB</td>
+                            <td>¥850</td>
+                        </tr>
+                        <tr>
+                            <td>5GB</td>
+                            <td>¥950</td>
+                        </tr>
+                        <tr>
+                            <td>10GB</td>
+                            <td>¥1,400</td>
+                        </tr>
+                        <tr>
+                            <td>15GB</td>
+                            <td>¥1,600</td>
+                        </tr>
+                        <tr>
+                            <td>25GB</td>
+                            <td>¥2,000</td>
+                        </tr>
+                        <tr>
+                            <td>35GB</td>
+                            <td>¥2,400</td>
+                        </tr>
+                        <tr>
+                            <td>45GB</td>
+                            <td>¥3,300</td>
+                        </tr>
+                        <tr>
+                            <td>55GB</td>
+                            <td>¥3,900</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
 
             <div class="tabs">
-                <button class="tab-btn active" onclick="switchTab(this, 'fixed')">回線数指定</button>
-                <button class="tab-btn" onclick="switchTab(this, 'free')">容量指定（回線数自動）</button>
+                <button
+                    class="tab-btn active"
+                    onclick="switchTab(this, 'fixed')"
+                >
+                    回線数指定
+                </button>
+                <button class="tab-btn" onclick="switchTab(this, 'free')">
+                    容量指定（回線数自動）
+                </button>
             </div>
 
             <div id="tab-fixed" class="tab-panel active">
@@ -168,25 +365,50 @@
                     <div class="form-grid">
                         <label>
                             回線数
-                            <input type="number" id="lines" value="4" min="1" max="20" />
+                            <input
+                                type="number"
+                                id="lines"
+                                value="4"
+                                min="1"
+                                max="20"
+                            />
                         </label>
                         <label>
                             最低容量 (GB)
-                            <input type="number" id="minGB" value="25" min="1" />
+                            <input
+                                type="number"
+                                id="minGB"
+                                value="25"
+                                min="1"
+                            />
                         </label>
                         <label>
                             最高容量 (GB)
-                            <input type="number" id="maxGB" value="45" min="1" />
+                            <input
+                                type="number"
+                                id="maxGB"
+                                value="45"
+                                min="1"
+                            />
                         </label>
                     </div>
                     <div class="btn-group">
-                        <button id="calcBtn" onclick="calculate()" disabled>計算中…</button>
-                        <button id="rangeBtn" onclick="calculateRange()" disabled style="background:#667eea">計算中…</button>
+                        <button id="calcBtn" onclick="calculate()" disabled>
+                            計算中…
+                        </button>
+                        <button
+                            id="rangeBtn"
+                            onclick="calculateRange()"
+                            disabled
+                            style="background: #667eea"
+                        >
+                            計算中…
+                        </button>
                     </div>
                     <div id="loading">WASMを読み込んでいます...</div>
                 </div>
-                <div class="card" id="result" style="display:none"></div>
-                <div class="card" id="range-result" style="display:none"></div>
+                <div class="card" id="result" style="display: none"></div>
+                <div class="card" id="range-result" style="display: none"></div>
             </div>
 
             <div id="tab-free" class="tab-panel">
@@ -195,24 +417,57 @@
                     <div class="form-grid">
                         <label>
                             最低容量 (GB)
-                            <input type="number" id="freeMinGB" value="25" min="1" />
+                            <input
+                                type="number"
+                                id="freeMinGB"
+                                value="25"
+                                min="1"
+                            />
                         </label>
                         <label>
                             最高容量 (GB)
-                            <input type="number" id="freeMaxGB" value="45" min="1" />
+                            <input
+                                type="number"
+                                id="freeMaxGB"
+                                value="45"
+                                min="1"
+                            />
                         </label>
                         <label>
                             最大回線数
-                            <input type="number" id="freeMaxLines" value="10" min="1" max="20" />
+                            <input
+                                type="number"
+                                id="freeMaxLines"
+                                value="10"
+                                min="1"
+                                max="20"
+                            />
                         </label>
                     </div>
                     <div class="btn-group">
-                        <button id="freeCalcBtn" onclick="calculateFree()" disabled>計算中…</button>
-                        <button id="freeRangeBtn" onclick="calculateFreeRange()" disabled style="background:#667eea">計算中…</button>
+                        <button
+                            id="freeCalcBtn"
+                            onclick="calculateFree()"
+                            disabled
+                        >
+                            計算中…
+                        </button>
+                        <button
+                            id="freeRangeBtn"
+                            onclick="calculateFreeRange()"
+                            disabled
+                            style="background: #667eea"
+                        >
+                            計算中…
+                        </button>
                     </div>
                 </div>
-                <div class="card" id="free-result" style="display:none"></div>
-                <div class="card" id="free-range-result" style="display:none"></div>
+                <div class="card" id="free-result" style="display: none"></div>
+                <div
+                    class="card"
+                    id="free-range-result"
+                    style="display: none"
+                ></div>
             </div>
         </div>
 
@@ -220,27 +475,39 @@
             let wasmReady = false;
 
             const go = new Go();
-            WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject)
+            WebAssembly.instantiateStreaming(
+                fetch("main.wasm"),
+                go.importObject,
+            )
                 .then((res) => {
                     go.run(res.instance);
                     wasmReady = true;
                     document.getElementById("calcBtn").disabled = false;
-                    document.getElementById("calcBtn").textContent = "最安値を計算";
+                    document.getElementById("calcBtn").textContent =
+                        "最安値を計算";
                     document.getElementById("rangeBtn").disabled = false;
-                    document.getElementById("rangeBtn").textContent = "1GB単位で一覧表示";
+                    document.getElementById("rangeBtn").textContent =
+                        "1GB単位で一覧表示";
                     document.getElementById("freeCalcBtn").disabled = false;
-                    document.getElementById("freeCalcBtn").textContent = "最安値を計算";
+                    document.getElementById("freeCalcBtn").textContent =
+                        "最安値を計算";
                     document.getElementById("freeRangeBtn").disabled = false;
-                    document.getElementById("freeRangeBtn").textContent = "1GB単位で一覧表示";
+                    document.getElementById("freeRangeBtn").textContent =
+                        "1GB単位で一覧表示";
                     document.getElementById("loading").textContent = "";
                 })
                 .catch((err) => {
-                    document.getElementById("loading").textContent = "WASMの読み込みに失敗しました: " + err;
+                    document.getElementById("loading").textContent =
+                        "WASMの読み込みに失敗しました: " + err;
                 });
 
             function switchTab(btn, name) {
-                document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
-                document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+                document
+                    .querySelectorAll(".tab-panel")
+                    .forEach((p) => p.classList.remove("active"));
+                document
+                    .querySelectorAll(".tab-btn")
+                    .forEach((b) => b.classList.remove("active"));
                 document.getElementById("tab-" + name).classList.add("active");
                 btn.classList.add("active");
             }
@@ -272,9 +539,10 @@
                 return html;
             }
 
-            function buildRangeHTML(minGB, maxGB, getFn, hasLines) {
+            function buildRangeHTML(minGB, maxGB, getFn, hasLines, canvasId) {
                 const fmt = (n) => n.toLocaleString("ja-JP");
                 const extraTh = hasLines ? "<th>回線数</th>" : "";
+                const data = [];
                 let html = `<h2>1GB単位の一覧（${minGB}GB〜${maxGB}GB）</h2>
                   <div class="range-scroll"><table class="range-table">
                   <thead><tr><th>合計GB</th>${extraTh}<th>最安値(割引後)</th><th>単価(/GB)</th><th>組み合わせ</th></tr></thead>
@@ -282,9 +550,17 @@
                 for (let gb = minGB; gb <= maxGB; gb++) {
                     const res = getFn(gb);
                     if (!res.found) {
+                        data.push(null);
                         html += `<tr class="no-result"><td>${gb}GB</td>${hasLines ? "<td>-</td>" : ""}<td colspan="3">組み合わせなし</td></tr>`;
                     } else {
-                        const labels = res.combos.map(c => c.label).join("<br>");
+                        data.push({
+                            gb,
+                            price: res.finalCost,
+                            pricePerGB: res.finalCost / gb,
+                        });
+                        const labels = res.combos
+                            .map((c) => c.label)
+                            .join("<br>");
                         const perGB = res.finalCost / gb;
                         const linesTd = hasLines ? `<td>${res.lines}</td>` : "";
                         html += `<tr>
@@ -295,60 +571,346 @@
                         </tr>`;
                     }
                 }
-                html += `</tbody></table></div>`;
-                return html;
+                html += `</tbody></table></div>
+                  <div class="chart-wrap">
+                    <canvas id="${canvasId}" height="260"></canvas>
+                    <div class="chart-tooltip" id="${canvasId}-tip"></div>
+                  </div>
+                  <div class="chart-wrap">
+                    <canvas id="${canvasId}-pgb" height="260"></canvas>
+                    <div class="chart-tooltip" id="${canvasId}-pgb-tip"></div>
+                  </div>`;
+                return { html, data };
+            }
+
+            function drawChart(canvasId, data, title) {
+                const canvas = document.getElementById(canvasId);
+                if (!canvas) return;
+                // Set physical pixel size
+                const W = canvas.offsetWidth || 640;
+                const H = 260;
+                const dpr = window.devicePixelRatio || 1;
+                canvas.width = W * dpr;
+                canvas.height = H * dpr;
+                const ctx = canvas.getContext("2d");
+                ctx.scale(dpr, dpr);
+
+                const PAD = { top: 36, right: 24, bottom: 44, left: 68 };
+                const cw = W - PAD.left - PAD.right;
+                const ch = H - PAD.top - PAD.bottom;
+
+                const points = data.filter((d) => d !== null);
+                if (points.length === 0) return;
+
+                // Title
+                if (title) {
+                    ctx.font = `bold 12px -apple-system, sans-serif`;
+                    ctx.fillStyle = "#2d3748";
+                    ctx.textAlign = "center";
+                    ctx.fillText(title, W / 2, 16);
+                }
+
+                const minGB = data.findIndex((d) => d !== null);
+                const maxPrice = Math.max(...points.map((d) => d.price));
+                const minPrice = Math.min(...points.map((d) => d.price));
+                const priceRange = maxPrice - minPrice || 1;
+                const yMax = maxPrice + priceRange * 0.1;
+                const yMin = Math.max(0, minPrice - priceRange * 0.1);
+
+                const toX = (i) => PAD.left + (i / (data.length - 1)) * cw;
+                const toY = (price) =>
+                    PAD.top + ch - ((price - yMin) / (yMax - yMin)) * ch;
+
+                // Grid lines & y-axis labels
+                ctx.font = `${11 * 1}px -apple-system, sans-serif`;
+                ctx.fillStyle = "#718096";
+                const yTicks = 5;
+                for (let t = 0; t <= yTicks; t++) {
+                    const price = yMin + (yMax - yMin) * (t / yTicks);
+                    const y = toY(price);
+                    ctx.strokeStyle = "#e2e8f0";
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(PAD.left, y);
+                    ctx.lineTo(PAD.left + cw, y);
+                    ctx.stroke();
+                    ctx.textAlign = "right";
+                    ctx.fillText(
+                        "¥" + Math.round(price).toLocaleString("ja-JP"),
+                        PAD.left - 6,
+                        y + 4,
+                    );
+                }
+
+                // X-axis labels
+                const step = Math.ceil(data.length / 10);
+                ctx.textAlign = "center";
+                for (let i = 0; i < data.length; i += step) {
+                    const d = data[i];
+                    if (!d) continue;
+                    const x = toX(i);
+                    ctx.fillStyle = "#718096";
+                    ctx.fillText(d.gb + "GB", x, H - PAD.bottom + 16);
+                }
+
+                // Area fill
+                const grad = ctx.createLinearGradient(
+                    0,
+                    PAD.top,
+                    0,
+                    PAD.top + ch,
+                );
+                grad.addColorStop(0, "rgba(66,153,225,0.25)");
+                grad.addColorStop(1, "rgba(66,153,225,0)");
+                ctx.beginPath();
+                let started = false;
+                for (let i = 0; i < data.length; i++) {
+                    if (!data[i]) {
+                        started = false;
+                        continue;
+                    }
+                    const x = toX(i),
+                        y = toY(data[i].price);
+                    if (!started) {
+                        ctx.moveTo(x, toY(yMin));
+                        ctx.lineTo(x, y);
+                        started = true;
+                    } else ctx.lineTo(x, y);
+                }
+                // close path along bottom
+                for (let i = data.length - 1; i >= 0; i--) {
+                    if (data[i]) {
+                        ctx.lineTo(toX(i), toY(yMin));
+                        break;
+                    }
+                }
+                ctx.fillStyle = grad;
+                ctx.fill();
+
+                // Line
+                ctx.strokeStyle = "#4299e1";
+                ctx.lineWidth = 2;
+                ctx.lineJoin = "round";
+                started = false;
+                ctx.beginPath();
+                for (let i = 0; i < data.length; i++) {
+                    if (!data[i]) {
+                        started = false;
+                        continue;
+                    }
+                    const x = toX(i),
+                        y = toY(data[i].price);
+                    if (!started) {
+                        ctx.moveTo(x, y);
+                        started = true;
+                    } else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+
+                // Dots
+                for (let i = 0; i < data.length; i++) {
+                    if (!data[i]) continue;
+                    const x = toX(i),
+                        y = toY(data[i].price);
+                    ctx.beginPath();
+                    ctx.arc(x, y, data.length > 30 ? 2 : 3.5, 0, Math.PI * 2);
+                    ctx.fillStyle = "#2b6cb0";
+                    ctx.fill();
+                }
+
+                // Hover tooltip
+                const tip = document.getElementById(canvasId + "-tip");
+                const wrap = canvas.parentElement;
+                canvas.onmousemove = (e) => {
+                    const rect = canvas.getBoundingClientRect();
+                    const mx = e.clientX - rect.left;
+                    const my = e.clientY - rect.top;
+                    let closest = null,
+                        minDist = Infinity;
+                    for (let i = 0; i < data.length; i++) {
+                        if (!data[i]) continue;
+                        const dx = toX(i) - mx,
+                            dy = toY(data[i].price) - my;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < minDist) {
+                            minDist = dist;
+                            closest = { i, d: data[i] };
+                        }
+                    }
+                    if (closest && minDist < 30) {
+                        tip.style.display = "block";
+                        tip.textContent = `${closest.d.gb}GB → ¥${closest.d.price.toLocaleString("ja-JP")}/月`;
+                        const x = toX(closest.i);
+                        const y = toY(closest.d.price);
+                        tip.style.left = x + 8 + "px";
+                        tip.style.top = y - 28 + "px";
+                    } else {
+                        tip.style.display = "none";
+                    }
+                };
+                canvas.onmouseleave = () => {
+                    tip.style.display = "none";
+                };
             }
 
             function calculate() {
-                const lines = parseInt(document.getElementById("lines").value, 10);
-                const minGB = parseInt(document.getElementById("minGB").value, 10);
-                const maxGB = parseInt(document.getElementById("maxGB").value, 10);
+                const lines = parseInt(
+                    document.getElementById("lines").value,
+                    10,
+                );
+                const minGB = parseInt(
+                    document.getElementById("minGB").value,
+                    10,
+                );
+                const maxGB = parseInt(
+                    document.getElementById("maxGB").value,
+                    10,
+                );
                 const div = document.getElementById("result");
                 div.style.display = "block";
-                if (isNaN(lines) || isNaN(minGB) || isNaN(maxGB) || lines < 1 || minGB < 1 || maxGB < minGB) {
-                    div.innerHTML = `<div class="error">⚠️ 入力値が不正です。</div>`; return;
+                if (
+                    isNaN(lines) ||
+                    isNaN(minGB) ||
+                    isNaN(maxGB) ||
+                    lines < 1 ||
+                    minGB < 1 ||
+                    maxGB < minGB
+                ) {
+                    div.innerHTML = `<div class="error">⚠️ 入力値が不正です。</div>`;
+                    return;
                 }
                 const res = findCheapest(lines, minGB, maxGB);
-                if (!res.found) { div.innerHTML = `<div class="error">⚠️ ${res.message}</div>`; return; }
+                if (!res.found) {
+                    div.innerHTML = `<div class="error">⚠️ ${res.message}</div>`;
+                    return;
+                }
                 div.innerHTML = buildResultHTML(res, lines);
             }
 
             function calculateRange() {
-                const lines = parseInt(document.getElementById("lines").value, 10);
-                const minGB = parseInt(document.getElementById("minGB").value, 10);
-                const maxGB = parseInt(document.getElementById("maxGB").value, 10);
+                const lines = parseInt(
+                    document.getElementById("lines").value,
+                    10,
+                );
+                const minGB = parseInt(
+                    document.getElementById("minGB").value,
+                    10,
+                );
+                const maxGB = parseInt(
+                    document.getElementById("maxGB").value,
+                    10,
+                );
                 const div = document.getElementById("range-result");
                 div.style.display = "block";
-                if (isNaN(lines) || isNaN(minGB) || isNaN(maxGB) || lines < 1 || minGB < 1 || maxGB < minGB) {
-                    div.innerHTML = `<div class="error">⚠️ 入力値が不正です。</div>`; return;
+                if (
+                    isNaN(lines) ||
+                    isNaN(minGB) ||
+                    isNaN(maxGB) ||
+                    lines < 1 ||
+                    minGB < 1 ||
+                    maxGB < minGB
+                ) {
+                    div.innerHTML = `<div class="error">⚠️ 入力値が不正です。</div>`;
+                    return;
                 }
-                div.innerHTML = buildRangeHTML(minGB, maxGB, gb => findCheapest(lines, gb, gb), false);
+                const { html, data } = buildRangeHTML(
+                    minGB,
+                    maxGB,
+                    (gb) => findCheapest(lines, gb, gb),
+                    false,
+                    "chart-fixed",
+                );
+                div.innerHTML = html;
+                requestAnimationFrame(() => {
+                    drawChart("chart-fixed", data, "月額最安値（割引後）");
+                    drawChart(
+                        "chart-fixed-pgb",
+                        data.map((d) =>
+                            d ? { gb: d.gb, price: d.pricePerGB } : null,
+                        ),
+                        "GB単価（¥/GB）",
+                    );
+                });
             }
 
             function calculateFree() {
-                const minGB = parseInt(document.getElementById("freeMinGB").value, 10);
-                const maxGB = parseInt(document.getElementById("freeMaxGB").value, 10);
-                const maxLines = parseInt(document.getElementById("freeMaxLines").value, 10);
+                const minGB = parseInt(
+                    document.getElementById("freeMinGB").value,
+                    10,
+                );
+                const maxGB = parseInt(
+                    document.getElementById("freeMaxGB").value,
+                    10,
+                );
+                const maxLines = parseInt(
+                    document.getElementById("freeMaxLines").value,
+                    10,
+                );
                 const div = document.getElementById("free-result");
                 div.style.display = "block";
-                if (isNaN(minGB) || isNaN(maxGB) || isNaN(maxLines) || minGB < 1 || maxGB < minGB || maxLines < 1) {
-                    div.innerHTML = `<div class="error">⚠️ 入力値が不正です。</div>`; return;
+                if (
+                    isNaN(minGB) ||
+                    isNaN(maxGB) ||
+                    isNaN(maxLines) ||
+                    minGB < 1 ||
+                    maxGB < minGB ||
+                    maxLines < 1
+                ) {
+                    div.innerHTML = `<div class="error">⚠️ 入力値が不正です。</div>`;
+                    return;
                 }
                 const res = findCheapestAnyLines(minGB, maxGB, maxLines);
-                if (!res.found) { div.innerHTML = `<div class="error">⚠️ ${res.message}</div>`; return; }
+                if (!res.found) {
+                    div.innerHTML = `<div class="error">⚠️ ${res.message}</div>`;
+                    return;
+                }
                 div.innerHTML = buildResultHTML(res, res.lines);
             }
 
             function calculateFreeRange() {
-                const minGB = parseInt(document.getElementById("freeMinGB").value, 10);
-                const maxGB = parseInt(document.getElementById("freeMaxGB").value, 10);
-                const maxLines = parseInt(document.getElementById("freeMaxLines").value, 10);
+                const minGB = parseInt(
+                    document.getElementById("freeMinGB").value,
+                    10,
+                );
+                const maxGB = parseInt(
+                    document.getElementById("freeMaxGB").value,
+                    10,
+                );
+                const maxLines = parseInt(
+                    document.getElementById("freeMaxLines").value,
+                    10,
+                );
                 const div = document.getElementById("free-range-result");
                 div.style.display = "block";
-                if (isNaN(minGB) || isNaN(maxGB) || isNaN(maxLines) || minGB < 1 || maxGB < minGB || maxLines < 1) {
-                    div.innerHTML = `<div class="error">⚠️ 入力値が不正です。</div>`; return;
+                if (
+                    isNaN(minGB) ||
+                    isNaN(maxGB) ||
+                    isNaN(maxLines) ||
+                    minGB < 1 ||
+                    maxGB < minGB ||
+                    maxLines < 1
+                ) {
+                    div.innerHTML = `<div class="error">⚠️ 入力値が不正です。</div>`;
+                    return;
                 }
-                div.innerHTML = buildRangeHTML(minGB, maxGB, gb => findCheapestAnyLines(gb, gb, maxLines), true);
+                const { html, data } = buildRangeHTML(
+                    minGB,
+                    maxGB,
+                    (gb) => findCheapestAnyLines(gb, gb, maxLines),
+                    true,
+                    "chart-free",
+                );
+                div.innerHTML = html;
+                requestAnimationFrame(() => {
+                    drawChart("chart-free", data, "月額最安値（割引後）");
+                    drawChart(
+                        "chart-free-pgb",
+                        data.map((d) =>
+                            d ? { gb: d.gb, price: d.pricePerGB } : null,
+                        ),
+                        "GB単価（¥/GB）",
+                    );
+                });
             }
         </script>
     </body>
