@@ -38,7 +38,6 @@ jobs:
         run: |
           # Makefileのタスクを利用して main.wasm と wasm_exec.js を生成
           make wasm
-          make wasm_exec
 
       - name: Prepare distribution files
         run: |
