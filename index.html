@@ -281,6 +281,7 @@
                   <tbody>`;
                 for (let gb = minGB; gb <= maxGB; gb++) {
                     const res = getFn(gb);
+                    if (!res.found) {
                         html += `<tr class="no-result"><td>${gb}GB</td>${hasLines ? "<td>-</td>" : ""}<td colspan="3">組み合わせなし</td></tr>`;
                     } else {
                         const labels = res.combos.map(c => c.label).join("<br>");
@@ -308,6 +309,7 @@
                     div.innerHTML = `<div class="error">⚠️ 入力値が不正です。</div>`; return;
                 }
                 const res = findCheapest(lines, minGB, maxGB);
+                if (!res.found) { div.innerHTML = `<div class="error">⚠️ ${res.message}</div>`; return; }
                 div.innerHTML = buildResultHTML(res, lines);
             }
 
@@ -333,6 +335,7 @@
                     div.innerHTML = `<div class="error">⚠️ 入力値が不正です。</div>`; return;
                 }
                 const res = findCheapestAnyLines(minGB, maxGB, maxLines);
+                if (!res.found) { div.innerHTML = `<div class="error">⚠️ ${res.message}</div>`; return; }
                 div.innerHTML = buildResultHTML(res, res.lines);
             }
 
@@ -347,6 +350,6 @@
                 }
                 div.innerHTML = buildRangeHTML(minGB, maxGB, gb => findCheapestAnyLines(gb, gb, maxLines), true);
             }
-        <\/script>
+        </script>
     </body>
 </html>
