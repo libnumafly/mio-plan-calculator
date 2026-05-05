@@ -72,9 +72,10 @@ function buildResultHTML(res) {
       <h2>最安の組み合わせ（${res.combos.length}パターン）</h2>
       <ul class="combo-list">`;
     for (const combo of res.combos) {
+        const comboLines = combo.types.reduce((sum, t) => sum + t.lines, 0);
         html += `<li>
           <div class="combo-header">
-            <span class="gb">合計 ${combo.totalGB}GB</span>
+            <span class="gb">合計 ${combo.totalGB}GB（全${comboLines}回線）</span>
             <span class="per-gb">¥${combo.pricePerGB.toFixed(1)}/GB</span>
           </div>
           <div class="type-breakdown">`;
