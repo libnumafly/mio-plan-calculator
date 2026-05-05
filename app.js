@@ -292,7 +292,9 @@ function drawChart(canvasId, data, title) {
 
 function calculate() {
     const minGB = parseInt(document.getElementById("minGB").value, 10);
-    const maxGB = parseInt(document.getElementById("maxGB").value, 10);
+    const maxGBStr = document.getElementById("maxGB").value;
+    // 未入力時は事実上の上限なしとして扱う
+    const maxGB = maxGBStr === "" ? 9999 : parseInt(maxGBStr, 10);
     const div = document.getElementById("result");
     div.style.display = "block";
     if (isNaN(minGB) || isNaN(maxGB) || minGB < 1 || maxGB < minGB) {
@@ -310,7 +312,9 @@ function calculate() {
 
 function calculateRange() {
     const minGB = parseInt(document.getElementById("minGB").value, 10);
-    const maxGB = parseInt(document.getElementById("maxGB").value, 10);
+    const maxGBStr = document.getElementById("maxGB").value;
+    // 一覧表示で未入力の場合は、負荷対策として +20GB 程度を上限とする
+    const maxGB = maxGBStr === "" ? minGB + 20 : parseInt(maxGBStr, 10);
     const div = document.getElementById("range-result");
     div.style.display = "block";
     if (isNaN(minGB) || isNaN(maxGB) || minGB < 1 || maxGB < minGB) {
