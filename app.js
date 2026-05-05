@@ -13,7 +13,7 @@ WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject)
     })
     .catch((err) => {
         document.getElementById("loading").textContent =
-            "WASMの読み込みに失敗しました: " + err;
+            "Oops: WASMの読み込みに失敗しました: " + err;
     });
 
 // Read per-type constraints from the form.
